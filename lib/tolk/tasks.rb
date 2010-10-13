@@ -11,8 +11,8 @@ namespace :tolk do
   end
 
   desc "Generate yml files for all the locales defined in Tolk"
-  task :dump_all => :preload do
-    Tolk::Locale.dump_all
+  task :dump_all, [:path] => :preload do |task, options|
+    Tolk::Locale.dump_all(options[:path])
   end
 
   desc "Imports data all non default locale yml files to Tolk"

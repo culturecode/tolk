@@ -45,9 +45,12 @@ module Tolk
         all - [primary_locale]
       end
 
-      def dump_all(to = self.locales_config_path)
+      def dump_all(target_path = nil)
+        target_dir = Rails.root + (target_path || self.locales_config_path)
+        target_dir.mkdir unless target_dir.exist?
+        
         secondary_locales.each do |locale|
-          File.open("#{to}/#{locale.name}.yml", "w+") do |file|
+          File.open(target_dir + "#{locale.name}.yml", "w+") do |file|
             data = locale.to_hash
             if data.respond_to?(:ya2yaml)
               file.write(data.ya2yaml(:syck_compatible => true))
