@@ -10,7 +10,7 @@ module Tolk
       end
 
       def load_translations(name = primary_locale.name.to_sym)
-        I18n.available_locales # force load
+        I18n.backend.available_locales # force load
         flat_hash(I18n.backend.send(:translations)[name])
       end
 
