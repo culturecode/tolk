@@ -182,7 +182,7 @@ module Tolk
     end
 
     def to_param
-      name.parameterize
+      name
     end
 
     def primary?
