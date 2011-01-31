@@ -4,7 +4,7 @@
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <title>Tolk</title>
+  <title>iShare Translations</title>
 
   <% if respond_to?(:sprockets_include_tag) %>
     <%= sprockets_include_tag %>
@@ -19,7 +19,7 @@
 <body>
   <div id="container">
     <div id="head">
-      <h1><%= yield :locale %></h1>
+      <h1><span class="home"><%= link_to "iShare", root_path %></span><%= yield :locale %></h1>
     </div>
     <%= yield %>
   </div>
