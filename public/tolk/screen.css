@@ -247,6 +247,11 @@ table.translations {
   text-align: left;
 }
 
+table.translations td.translator a{
+    white-space: nowrap;
+    text-decoration: none;
+}
+
 table.translations td,
 table.translations th {
   font-size: 14px;
