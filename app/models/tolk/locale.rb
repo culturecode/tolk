@@ -5,8 +5,57 @@ module Tolk
   class Locale < ActiveRecord::Base
     set_table_name "tolk_locales"
 
+    MAPPING = {
+      'ar'    => 'Arabic',
+      'bs'    => 'Bosnian',
+      'bt'    => 'Bulgarian',
+      'ca'    => 'Catalan',
+      'cz'    => 'Czech',
+      'da'    => 'Danish',
+      'de'    => 'German',
+      'dsb'   => 'Lower Sorbian',
+      'el'    => 'Greek',
+      'en'    => 'English',
+      'es'    => 'Spanish',
+      'et'    => 'Estonian',
+      'fa'    => 'Persian',
+      'fi'    => 'Finnish',
+      'fr'    => 'French',
+      'he'    => 'Hebrew',
+      'hr'    => 'Croatian',
+      'hsb'   => 'Upper Sorbian',
+      'hu'    => 'Hungarian',
+      'id'    => 'Indonesian',
+      'is'    => 'Icelandic',
+      'it'    => 'Italian',
+      'jp'    => 'Japanese',
+      'ko'    => 'Korean',
+      'lo'    => 'Lao',
+      'lt'    => 'Lithuanian',
+      'lv'    => 'Latvian',
+      'mk'    => 'Macedonian',
+      'nl'    => 'Dutch',
+      'no'    => 'Norwegian',
+      'pl'    => 'Polish',
+      'pt-BR' => 'Portuguese (Brazilian)',
+      'pt-PT' => 'Portuguese (Portugal)',
+      'ro'    => 'Romanian',
+      'ru'    => 'Russian',
+      'se'    => 'Swedish',
+      'sk'    => 'Slovak',
+      'sl'    => 'Slovenian',
+      'sr'    => 'Serbian',
+      'sw'    => 'Swahili',
+      'th'    => 'Thai',
+      'tr'    => 'Turkish',
+      'uk'    => 'Ukrainian',
+      'vi'    => 'Vietnamese',
+      'zh-CN' => 'Chinese (Simplified)',
+      'zh-TW' => 'Chinese (Traditional)'
+    }
+
     has_many :phrases, :through => :translations, :class_name => 'Tolk::Phrase'
-    has_many :translations, :class_name => 'Tolk::Translation', :dependent => :delete_all
+    has_many :translations, :class_name => 'Tolk::Translation', :dependent => :destroy
     accepts_nested_attributes_for :translations, :reject_if => proc { |attributes| attributes['text'].blank? }
     before_validation :remove_invalid_translations_from_target, :on => :update
 
@@ -45,18 +94,11 @@ module Tolk
         all - [primary_locale]
       end
 
-      def dump_all(target_path = nil)
-        target_dir = Rails.root + (target_path || self.locales_config_path)
-        target_dir.mkdir unless target_dir.exist?
-        
+      def dump_all(to = self.locales_config_path)
         secondary_locales.each do |locale|
-          File.open(target_dir + "#{locale.name}.yml", "w+") do |file|
+          File.open("#{to}/#{locale.name}.yml", "w+") do |file|
             data = locale.to_hash
-            if data.respond_to?(:ya2yaml)
-              file.write(data.ya2yaml(:syck_compatible => true))
-            else
-              YAML.dump(data, file)
-            end
+            data.respond_to?(:ya2yaml) ? file.write(data.ya2yaml(:syck_compatible => true)) : YAML.dump(locale.to_hash, file)
           end
         end
       end
@@ -140,7 +182,7 @@ module Tolk
     end
 
     def to_param
-      name.parameterize
+      name
     end
 
     def primary?
@@ -148,7 +190,7 @@ module Tolk
     end
 
     def language_name
-      I18n.translate(self.name, :scope => :locales, :default => self.name)
+      MAPPING[self.name] || self.name
     end
 
     def [](key)

@@ -130,8 +130,7 @@ ul.locales {
 }
 
 ul.locales li {
-  /*width: 230px;*/
-  width: 150px;
+  width: 300px;
   display: block;
   float: left;
   margin: 0 10px 10px 0;
@@ -246,6 +245,11 @@ table.translations {
   margin: 0 0 25px;
   width: 100%;
   text-align: left;
+}
+
+table.translations td.translator a{
+    white-space: nowrap;
+    text-decoration: none;
 }
 
 table.translations td,
